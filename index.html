@@ -3,432 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verbi Irregolari - Mega Database (140+)</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <title>English Verbs Master - 144 Verbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        table { border-collapse: collapse; width: 100%; font-size: 13px; }
-        th { position: sticky; top: 0; background-color: #1e293b; color: white; z-index: 10; padding: 12px; }
-        td { border: 1px solid #e2e8f0; padding: 8px 12px; }
-        .given-form { background-color: #f8fafc !important; color: #94a3b8 !important; cursor: not-allowed; }
-        .hard-row { font-style: italic; color: #b91c1c; }
-        .quiz-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+        .verb-card { transition: transform 0.2s; border-left: 4px solid #e2e8f0; }
+        .verb-card:hover { transform: translateY(-2px); }
+        .hard-mode-active { border-color: #ef4444 !important; background: #fef2f2; }
+        .shortcut-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #475569; font-weight: bold; margin-left: 4px; }
+        @media print { .no-print { display: none; } }
     </style>
 </head>
-<body class="bg-slate-50 p-4 font-sans">
+<body class="p-4 md:p-8">
 
-    <!-- SEZIONE QUIZ -->
-    <div class="max-w-6xl mx-auto mb-10 no-print">
-        <div id="quizBox" class="bg-white rounded-3xl shadow-2xl border-4 border-slate-200 overflow-hidden transition-all">
-            <div id="quizHeader" class="bg-slate-800 p-6 text-white flex justify-between items-center">
+    <!-- HEADER & QUIZ -->
+    <div class="max-w-6xl mx-auto space-y-6 no-print">
+        <div class="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
-                    <h2 id="quizTitle" class="text-2xl font-black flex items-center gap-2">📚 Verb Master Pro</h2>
-                    <p class="text-xs opacity-70">Oltre 140 verbi nel database</p>
+                    <h1 class="text-3xl font-black tracking-tighter">VERB MASTER PRO 🔥</h1>
+                    <p class="text-slate-400 text-sm">Database completo: 144 verbi caricati</p>
                 </div>
-                <div class="flex items-center gap-6">
-                    <div class="flex items-center gap-3 bg-white/10 p-3 rounded-xl border border-white/20">
-                        <span class="text-sm font-bold uppercase tracking-tighter">Hard Mode 🔥</span>
-                        <input type="checkbox" id="hardModeToggle" onchange="toggleHardMode()" class="w-6 h-6 cursor-pointer accent-red-500">
-                    </div>
-                    <div class="text-right">
-                        <span id="scoreCounter" class="text-2xl font-mono font-bold text-yellow-400">000</span>
-                        <p class="text-[10px] uppercase font-bold opacity-50 text-center">Score</p>
+                <div class="flex items-center gap-4 bg-slate-800 p-2 rounded-2xl border border-slate-700">
+                    <span class="text-xs font-bold px-3">HARD MODE</span>
+                    <button id="hardToggle" onclick="toggleHardMode()" class="w-12 h-6 bg-slate-600 rounded-full relative transition-colors">
+                        <div id="toggleDot" class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all"></div>
+                    </button>
+                    <div class="ml-4 border-l border-slate-700 pl-4 pr-2 text-right">
+                        <div id="score" class="text-2xl font-black text-yellow-400">0</div>
+                        <div class="text-[10px] text-slate-500 uppercase tracking-widest">Score</div>
                     </div>
                 </div>
             </div>
-            
-            <div class="p-8">
-                <div class="text-center mb-10">
-                    <span id="quizInstruction" class="text-slate-400 text-xs uppercase font-black tracking-[0.2em]">Traduzione / Indizio</span>
-                    <h3 id="targetHint" class="text-5xl font-black text-slate-800 mt-2">---</h3>
-                </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Base Form</label>
-                        <input id="qBase" type="text" autocomplete="off" class="quiz-input w-full border-2 border-slate-200 p-4 rounded-2xl text-center font-bold text-xl outline-none" placeholder="...">
+            <div class="text-center py-6">
+                <span id="qType" class="text-indigo-400 text-[10px] font-black uppercase tracking-[0.3em]">Traduzione</span>
+                <h2 id="qPrompt" class="text-5xl font-black mt-2 mb-10">...</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
+                    <div class="relative group">
+                        <label class="absolute -top-3 left-4 bg-slate-900 px-2 text-[10px] font-bold text-slate-500">BASE FORM <span class="shortcut-badge">ALT+1</span></label>
+                        <input id="inBase" type="text" autocomplete="off" class="w-full bg-transparent border-2 border-slate-700 p-4 rounded-xl text-center text-xl font-bold focus:border-indigo-500 outline-none transition-all">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Past Simple</label>
-                        <input id="qPast" type="text" autocomplete="off" class="quiz-input w-full border-2 border-slate-200 p-4 rounded-2xl text-center font-bold text-xl outline-none" placeholder="...">
+                    <div class="relative group">
+                        <label class="absolute -top-3 left-4 bg-slate-900 px-2 text-[10px] font-bold text-slate-500">PAST SIMPLE <span class="shortcut-badge">ALT+2</span></label>
+                        <input id="inPast" type="text" autocomplete="off" class="w-full bg-transparent border-2 border-slate-700 p-4 rounded-xl text-center text-xl font-bold focus:border-indigo-500 outline-none transition-all">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Past Participle</label>
-                        <input id="qPart" type="text" autocomplete="off" class="quiz-input w-full border-2 border-slate-200 p-4 rounded-2xl text-center font-bold text-xl outline-none" placeholder="...">
+                    <div class="relative group">
+                        <label class="absolute -top-3 left-4 bg-slate-900 px-2 text-[10px] font-bold text-slate-500">PAST PARTICIPLE <span class="shortcut-badge">ALT+3</span></label>
+                        <input id="inPart" type="text" autocomplete="off" class="w-full bg-transparent border-2 border-slate-700 p-4 rounded-xl text-center text-xl font-bold focus:border-indigo-500 outline-none transition-all">
                     </div>
                 </div>
 
-                <div id="quizFeedback" class="hidden mb-8 p-5 rounded-2xl text-center font-bold text-lg animate-bounce"></div>
+                <div id="feedback" class="h-12 flex items-center justify-center font-bold text-lg mb-6"></div>
 
-                <div class="flex justify-center gap-4">
-                    <button id="btnCheck" onclick="checkQuiz()" class="bg-emerald-500 text-white px-10 py-4 rounded-2xl font-black shadow-lg hover:bg-emerald-600 transition-all active:scale-95">CONTROLLA</button>
-                    <button id="btnNext" onclick="newQuestion()" class="bg-slate-800 text-white px-10 py-4 rounded-2xl font-black shadow-lg hover:bg-slate-900 transition-all active:scale-95">PROSSIMO</button>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="checkAnswer()" class="bg-indigo-600 hover:bg-indigo-500 px-8 py-3 rounded-xl font-black transition-all active:scale-95 shadow-lg">CONTROLLA (Invio)</button>
+                    <button onclick="giveHint()" class="bg-slate-700 hover:bg-slate-600 px-8 py-3 rounded-xl font-black transition-all">SUGGERIMENTO</button>
+                    <button onclick="nextQuestion()" class="bg-white text-slate-900 hover:bg-slate-200 px-8 py-3 rounded-xl font-black transition-all">PROSSIMO</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- TABELLA COMPLETA -->
-    <div class="max-w-6xl mx-auto">
-        <div class="flex justify-between items-end mb-6 no-print">
+    <!-- LISTA VERBI -->
+    <div class="max-w-6xl mx-auto mt-12">
+        <div class="flex justify-between items-end mb-6">
             <div>
-                <h2 class="text-3xl font-black text-slate-800">Dizionario Verbi Irregolari</h2>
-                <p class="text-slate-500">Database completo: <span id="verbCount">0</span> verbi classificati</p>
+                <h2 class="text-3xl font-black text-slate-800">Dizionario Irregolare</h2>
+                <p class="text-slate-500">Tutti i 144 verbi classificati per gruppo</p>
             </div>
-            <button onclick="downloadImage()" class="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-black shadow-xl hover:bg-indigo-700 transition-all active:scale-95 flex items-center gap-2">
-                📸 SALVA COME IMMAGINE
+            <button onclick="saveImage()" class="no-print bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-emerald-700 shadow-lg flex items-center gap-2">
+                📸 SALVA LISTA
             </button>
         </div>
 
-        <div id="captureArea" class="bg-white shadow-xl rounded-3xl overflow-hidden border border-slate-200 p-6">
-            <div id="tableContainer">
-                <!-- Tabelle generate via JS -->
-            </div>
+        <div id="verbListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+            <!-- Riempito via JS -->
         </div>
     </div>
 
     <script>
-        const groupsDef = {
-            'fondamentali': { title: 'Verbi Essenziali', bg: '#f1f5f9', text: '#1e293b' },
-            'invariati': { title: 'Gruppo 1: Invariati (A-A-A)', bg: '#f0fdf4', text: '#166534' },
-            'basepart': { title: 'Gruppo 2: Base = Participio (A-B-A)', bg: '#fff7ed', text: '#9a3412' },
-            'iau': { title: 'Gruppo 3: Cambio Vocale (I-A-U)', bg: '#fefce8', text: '#854d0e' },
-            'ought': { title: 'Gruppo 4: Terminazione -OUGHT/-AUGHT', bg: '#eff6ff', text: '#1e40af' },
-            'identici': { title: 'Gruppo 5: Past Simple = Participio (A-B-B)', bg: '#fdf2f8', text: '#9d174d' },
-            'diversi': { title: 'Gruppo 6: Tutti Diversi / -EN (A-B-C)', bg: '#f5f3ff', text: '#5b21b6' }
-        };
-
-        const allVerbs = [
+        const verbs = [
             // FONDAMENTALI
-            {b:"be", p:"was/were", pp:"been", t:"essere", g:"fondamentali", h:false},
-            {b:"have", p:"had", pp:"had", t:"avere", g:"fondamentali", h:false},
-            {b:"do", p:"did", pp:"done", t:"fare", g:"fondamentali", h:false},
-            {b:"go", p:"went", pp:"gone", t:"andare", g:"fondamentali", h:false},
-            {b:"say", p:"said", pp:"said", t:"dire", g:"fondamentali", h:false},
-            {b:"get", p:"got", pp:"got", t:"ottenere", g:"fondamentali", h:false},
-            {b:"make", p:"made", pp:"made", t:"fare (costruire)", g:"fondamentali", h:false},
-            {b:"know", p:"knew", pp:"known", t:"sapere", g:"fondamentali", h:false},
-            {b:"think", p:"thought", pp:"thought", t:"pensare", g:"fondamentali", h:false},
-            {b:"take", p:"took", pp:"taken", t:"prendere", g:"fondamentali", h:false},
-            {b:"see", p:"saw", pp:"seen", t:"vedere", g:"fondamentali", h:false},
-            {b:"come", p:"came", pp:"come", t:"venire", g:"fondamentali", h:false},
-            {b:"find", p:"found", pp:"found", t:"trovare", g:"fondamentali", h:false},
-            {b:"give", p:"gave", pp:"given", t:"dare", g:"fondamentali", h:false},
-            {b:"tell", p:"told", pp:"told", t:"raccontare", g:"fondamentali", h:false},
-            
+            {b:"be", p:"was/were", pp:"been", t:"essere", h:false},
+            {b:"have", p:"had", pp:"had", t:"avere", h:false},
+            {b:"do", p:"did", pp:"done", t:"fare", h:false},
+            {b:"go", p:"went", pp:"gone", t:"andare", h:false},
+            {b:"say", p:"said", pp:"said", t:"dire", h:false},
+            {b:"get", p:"got", pp:"got", t:"ottenere", h:false},
+            {b:"make", p:"made", pp:"made", t:"fare (costruire)", h:false},
+            {b:"know", p:"knew", pp:"known", t:"sapere", h:false},
+            {b:"think", p:"thought", pp:"thought", t:"pensare", h:false},
+            {b:"take", p:"took", pp:"taken", t:"prendere", h:false},
+            {b:"see", p:"saw", pp:"seen", t:"vedere", h:false},
+            {b:"come", p:"came", pp:"come", t:"venire", h:false},
+            {b:"find", p:"found", pp:"found", t:"trovare", h:false},
+            {b:"give", p:"gave", pp:"given", t:"dare", h:false},
+            {b:"tell", p:"told", pp:"told", t:"raccontare", h:false},
             // INVARIATI
-            {b:"bet", p:"bet", pp:"bet", t:"scommettere", g:"invariati", h:false},
-            {b:"bid", p:"bid", pp:"bid", t:"offrire (asta)", g:"invariati", h:true},
-            {b:"burst", p:"burst", pp:"burst", t:"scoppiare", g:"invariati", h:true},
-            {b:"cast", p:"cast", pp:"cast", t:"lanciare", g:"invariati", h:true},
-            {b:"cost", p:"cost", pp:"cost", t:"costare", g:"invariati", h:false},
-            {b:"cut", p:"cut", pp:"cut", t:"tagliare", g:"invariati", h:false},
-            {b:"hit", p:"hit", pp:"hit", t:"colpire", g:"invariati", h:false},
-            {b:"hurt", p:"hurt", pp:"hurt", t:"farsi male", g:"invariati", h:false},
-            {b:"knit", p:"knit", pp:"knit", t:"lavorare a maglia", g:"invariati", h:true},
-            {b:"let", p:"let", pp:"let", t:"permettere", g:"invariati", h:false},
-            {b:"put", p:"put", pp:"put", t:"mettere", g:"invariati", h:false},
-            {b:"read", p:"read", pp:"read", t:"leggere", g:"invariati", h:false},
-            {b:"set", p:"set", pp:"set", t:"impostare", g:"invariati", h:false},
-            {b:"shed", p:"shed", pp:"shed", t:"spargere", g:"invariati", h:true},
-            {b:"shut", p:"shut", pp:"shut", t:"chiudere", g:"invariati", h:false},
-            {b:"slit", p:"slit", pp:"slit", t:"tagliare", g:"invariati", h:true},
-            {b:"split", p:"split", pp:"split", t:"dividere", g:"invariati", h:false},
-            {b:"spread", p:"spread", pp:"spread", t:"diffondere", g:"invariati", h:false},
-            {b:"thrust", p:"thrust", pp:"thrust", t:"spingere", g:"invariati", h:true},
-            {b:"upset", p:"upset", pp:"upset", t:"agitare", g:"invariati", h:false},
-
+            {b:"bet", p:"bet", pp:"bet", t:"scommettere", h:false},
+            {b:"bid", p:"bid", pp:"bid", t:"offrire (asta)", h:true},
+            {b:"burst", p:"burst", pp:"burst", t:"scoppiare", h:true},
+            {b:"cast", p:"cast", pp:"cast", t:"lanciare", h:true},
+            {b:"cost", p:"cost", pp:"cost", t:"costare", h:false},
+            {b:"cut", p:"cut", pp:"cut", t:"tagliare", h:false},
+            {b:"hit", p:"hit", pp:"hit", t:"colpire", h:false},
+            {b:"hurt", p:"hurt", pp:"hurt", t:"farsi male", h:false},
+            {b:"knit", p:"knit", pp:"knit", t:"lavorare a maglia", h:true},
+            {b:"let", p:"let", pp:"let", t:"permettere", h:false},
+            {b:"put", p:"put", pp:"put", t:"mettere", h:false},
+            {b:"read", p:"read", pp:"read", t:"leggere", h:false},
+            {b:"set", p:"set", pp:"set", t:"impostare", h:false},
+            {b:"shed", p:"shed", pp:"shed", t:"spargere", h:true},
+            {b:"shut", p:"shut", pp:"shut", t:"chiudere", h:false},
+            {b:"slit", p:"slit", pp:"slit", t:"tagliare", h:true},
+            {b:"split", p:"split", pp:"split", t:"dividere", h:false},
+            {b:"spread", p:"spread", pp:"spread", t:"diffondere", h:false},
+            {b:"thrust", p:"thrust", pp:"thrust", t:"spingere", h:true},
+            {b:"upset", p:"upset", pp:"upset", t:"agitare", h:false},
             // BASE = PARTICIPIO
-            {b:"become", p:"became", pp:"become", t:"diventare", g:"basepart", h:false},
-            {b:"overcome", p:"overcame", pp:"overcome", t:"superare", g:"basepart", h:true},
-            {b:"run", p:"ran", pp:"run", t:"correre", g:"basepart", h:false},
-
+            {b:"become", p:"became", pp:"become", t:"diventare", h:false},
+            {b:"overcome", p:"overcame", pp:"overcome", t:"superare", h:true},
+            {b:"run", p:"ran", pp:"run", t:"correre", h:false},
             // IAU
-            {b:"begin", p:"began", pp:"begun", t:"iniziare", g:"iau", h:false},
-            {b:"drink", p:"drank", pp:"drunk", t:"bere", g:"iau", h:false},
-            {b:"ring", p:"rang", pp:"rung", t:"suonare", g:"iau", h:false},
-            {b:"shrink", p:"shrank", pp:"shrunk", t:"restringersi", g:"iau", h:true},
-            {b:"sing", p:"sang", pp:"sung", t:"cantare", g:"iau", h:false},
-            {b:"sink", p:"sank", pp:"sunk", t:"affondare", g:"iau", h:true},
-            {b:"stink", p:"stank", pp:"stunk", t:"puzzare", g:"iau", h:true},
-            {b:"swim", p:"swam", pp:"swum", t:"nuotare", g:"iau", h:false},
-
+            {b:"begin", p:"began", pp:"begun", t:"iniziare", h:false},
+            {b:"drink", p:"drank", pp:"drunk", t:"bere", h:false},
+            {b:"ring", p:"rang", pp:"rung", t:"suonare", h:false},
+            {b:"shrink", p:"shrank", pp:"shrunk", t:"restringersi", h:true},
+            {b:"sing", p:"sang", pp:"sung", t:"cantare", h:false},
+            {b:"sink", p:"sank", pp:"sunk", t:"affondare", h:true},
+            {b:"stink", p:"stank", pp:"stunk", t:"puzzare", h:true},
+            {b:"swim", p:"swam", pp:"swum", t:"nuotare", h:false},
             // OUGHT / AUGHT
-            {b:"bring", p:"brought", pp:"brought", t:"portare", g:"ought", h:false},
-            {b:"buy", p:"bought", pp:"bought", t:"comprare", g:"ought", h:false},
-            {b:"catch", p:"caught", pp:"caught", t:"afferrare", g:"ought", h:false},
-            {b:"fight", p:"fought", pp:"fought", t:"combattere", g:"ought", h:false},
-            {b:"seek", p:"sought", pp:"sought", t:"cercare", g:"ought", h:true},
-            {b:"teach", p:"taught", pp:"taught", t:"insegnare", g:"ought", h:false},
-            {b:"think", p:"thought", pp:"thought", t:"pensare", g:"ought", h:false},
-
-            // IDENTICI (A-B-B)
-            {b:"abide", p:"abode", pp:"abode", t:"dimorare", g:"identici", h:true},
-            {b:"awake", p:"awoke", pp:"awoke", t:"svegliare", g:"identici", h:true},
-            {b:"bend", p:"bent", pp:"bent", t:"piegare", g:"identici", h:false},
-            {b:"bleed", p:"bled", pp:"bled", t:"sanguinare", g:"identici", h:true},
-            {b:"breed", p:"bred", pp:"bred", t:"allevare", g:"identici", h:true},
-            {b:"build", p:"built", pp:"built", t:"costruire", g:"identici", h:false},
-            {b:"burn", p:"burnt", pp:"burnt", t:"bruciare", g:"identici", h:false},
-            {b:"cling", p:"clung", pp:"clung", t:"aggrapparsi", g:"identici", h:true},
-            {b:"creep", p:"crept", pp:"crept", t:"strisciare", g:"identici", h:true},
-            {b:"deal", p:"dealt", pp:"dealt", t:"trattare", g:"identici", h:false},
-            {b:"dig", p:"dug", pp:"dug", t:"scavare", g:"identici", h:false},
-            {b:"dream", p:"dreamt", pp:"dreamt", t:"sognare", g:"identici", h:false},
-            {b:"dwell", p:"dwelt", pp:"dwelt", t:"abitare", g:"identici", h:true},
-            {b:"feed", p:"fed", pp:"fed", t:"nutrire", g:"identici", h:false},
-            {b:"feel", p:"felt", pp:"felt", t:"sentire", g:"identici", h:false},
-            {b:"flee", p:"fled", pp:"fled", t:"fuggire", g:"identici", h:true},
-            {b:"fling", p:"flung", pp:"flung", t:"scagliare", g:"identici", h:true},
-            {b:"grind", p:"ground", pp:"ground", t:"macinare", g:"identici", h:true},
-            {b:"hang", p:"hung", pp:"hung", t:"appendere", g:"identici", h:false},
-            {b:"hear", p:"heard", pp:"heard", t:"udire", g:"identici", h:false},
-            {b:"hold", p:"held", pp:"held", t:"tenere", g:"identici", h:false},
-            {b:"keep", p:"kept", pp:"kept", t:"mantenere", g:"identici", h:false},
-            {b:"kneel", p:"knelt", pp:"knelt", t:"inginocchiarsi", g:"identici", h:true},
-            {b:"lay", p:"laid", pp:"laid", t:"distendere", g:"identici", h:true},
-            {b:"lead", p:"led", pp:"led", t:"guidare", g:"identici", h:false},
-            {b:"lean", p:"leant", pp:"leant", t:"appoggiarsi", g:"identici", h:true},
-            {b:"leap", p:"leapt", pp:"leapt", t:"saltare", g:"identici", h:true},
-            {b:"learn", p:"learnt", pp:"learnt", t:"imparare", g:"identici", h:false},
-            {b:"leave", p:"left", pp:"left", t:"lasciare", g:"identici", h:false},
-            {b:"lend", p:"lent", pp:"lent", t:"prestare", g:"identici", h:false},
-            {b:"light", p:"lit", pp:"lit", t:"accendere", g:"identici", h:false},
-            {b:"lose", p:"lost", pp:"lost", t:"perdere", g:"identici", h:false},
-            {b:"mean", p:"meant", pp:"meant", t:"significare", g:"identici", h:false},
-            {b:"meet", p:"met", pp:"met", t:"incontrare", g:"identici", h:false},
-            {b:"mislead", p:"misled", pp:"misled", t:"fuorviare", g:"identici", h:true},
-            {b:"pay", p:"paid", pp:"paid", t:"pagare", g:"identici", h:false},
-            {b:"plead", p:"pled", pp:"pled", t:"supplicare", g:"identici", h:true},
-            {b:"sell", p:"sold", pp:"sold", t:"vendere", g:"identici", h:false},
-            {b:"send", p:"sent", pp:"sent", t:"spedire", g:"identici", h:false},
-            {b:"shine", p:"shone", pp:"shone", t:"brillare", g:"identici", h:false},
-            {b:"shoot", p:"shot", pp:"shot", t:"sparare", g:"identici", h:false},
-            {b:"sit", p:"sat", pp:"sat", t:"sedersi", g:"identici", h:false},
-            {b:"sleep", p:"slept", pp:"slept", t:"dormire", g:"identici", h:false},
-            {b:"slide", p:"slid", pp:"slid", t:"scivolare", g:"identici", h:true},
-            {b:"sling", p:"slung", pp:"slung", t:"scagliare", g:"identici", h:true},
-            {b:"slink", p:"slunk", pp:"slunk", t:"strisciare via", g:"identici", h:true},
-            {b:"smell", p:"smelt", pp:"smelt", t:"odorare", g:"identici", h:false},
-            {b:"speed", p:"sped", pp:"sped", t:"accelerare", g:"identici", h:true},
-            {b:"spell", p:"spelt", pp:"spelt", t:"compitare", g:"identici", h:false},
-            {b:"spend", p:"spent", pp:"spent", t:"spendere", g:"identici", h:false},
-            {b:"spill", p:"spilt", pp:"spilt", t:"versare", g:"identici", h:false},
-            {b:"spin", p:"spun", pp:"spun", t:"ruotare", g:"identici", h:true},
-            {b:"spit", p:"spat", pp:"spat", t:"sputare", g:"identici", h:true},
-            {b:"spoil", p:"spoilt", pp:"spoilt", t:"rovinare", g:"identici", h:false},
-            {b:"stand", p:"stood", pp:"stood", t:"stare in piedi", g:"identici", h:false},
-            {b:"stick", p:"stuck", pp:"stuck", t:"incollare", g:"identici", h:false},
-            {b:"sting", p:"stung", pp:"stung", t:"pungere", g:"identici", h:true},
-            {b:"strike", p:"struck", pp:"struck", t:"colpire", g:"identici", h:false},
-            {b:"string", p:"strung", pp:"strung", t:"tendere", g:"identici", h:true},
-            {b:"sweep", p:"swept", pp:"swept", t:"spazzare", g:"identici", h:false},
-            {b:"swing", p:"swung", pp:"swung", t:"oscillare", g:"identici", h:true},
-            {b:"understand", p:"understood", pp:"understood", t:"capire", g:"identici", h:false},
-            {b:"weep", p:"wept", pp:"wept", t:"piangere", g:"identici", h:true},
-            {b:"win", p:"won", pp:"won", t:"vincere", g:"identici", h:false},
-            {b:"wind", p:"wound", pp:"wound", t:"avvolgere", g:"identici", h:true},
-            {b:"wring", p:"wrung", pp:"wrung", t:"strizzare", g:"identici", h:true},
-
-            // DIVERSI (A-B-C)
-            {b:"arise", p:"arose", pp:"arisen", t:"sorgere", g:"diversi", h:true},
-            {b:"bear", p:"bore", pp:"born", t:"sopportare", g:"diversi", h:true},
-            {b:"beat", p:"beat", pp:"beaten", t:"battere", g:"diversi", h:false},
-            {b:"bite", p:"bit", pp:"bitten", t:"mordere", g:"diversi", h:false},
-            {b:"blow", p:"blew", pp:"blown", t:"soffiare", g:"diversi", h:false},
-            {b:"break", p:"broke", pp:"broken", t:"rompere", g:"diversi", h:false},
-            {b:"choose", p:"chose", pp:"chosen", t:"scegliere", g:"diversi", h:false},
-            {b:"draw", p:"drew", pp:"drawn", t:"disegnare", g:"diversi", h:false},
-            {b:"drive", p:"drove", pp:"driven", t:"guidare", g:"diversi", h:false},
-            {b:"eat", p:"ate", pp:"eaten", t:"mangiare", g:"diversi", h:false},
-            {b:"fall", p:"fell", pp:"fallen", t:"cadere", g:"diversi", h:false},
-            {b:"fly", p:"flew", pp:"flown", t:"volare", g:"diversi", h:false},
-            {b:"forbid", p:"forbade", pp:"forbidden", t:"proibire", g:"diversi", h:true},
-            {b:"forget", p:"forgot", pp:"forgotten", t:"dimenticare", g:"diversi", h:false},
-            {b:"forgive", p:"forgave", pp:"forgiven", t:"perdonare", g:"diversi", h:false},
-            {b:"freeze", p:"froze", pp:"frozen", t:"gelare", g:"diversi", h:false},
-            {b:"hide", p:"hid", pp:"hidden", t:"nascondere", g:"diversi", h:false},
-            {b:"lie", p:"lay", pp:"lain", t:"sdraiarsi", g:"diversi", h:true},
-            {b:"mistake", p:"mistook", pp:"mistaken", t:"sbagliare", g:"diversi", h:true},
-            {b:"mow", p:"mowed", pp:"mown", t:"falciare", g:"diversi", h:true},
-            {b:"overtake", p:"overtook", pp:"overtaken", t:"sorpassare", g:"diversi", h:true},
-            {b:"ride", p:"rode", pp:"ridden", t:"cavalcare", g:"diversi", h:false},
-            {b:"rise", p:"rose", pp:"risen", t:"alzarsi", g:"diversi", h:false},
-            {b:"saw", p:"sawed", pp:"sawn", t:"segare", g:"diversi", h:true},
-            {b:"sew", p:"sewed", pp:"sewn", t:"cucire", g:"diversi", h:true},
-            {b:"shake", p:"shook", pp:"shaken", t:"scuotere", g:"diversi", h:false},
-            {b:"show", p:"showed", pp:"shown", t:"mostrare", g:"diversi", h:false},
-            {b:"slay", p:"slew", pp:"slain", t:"uccidere", g:"diversi", h:true},
-            {b:"speak", p:"spoke", pp:"spoken", t:"parlare", g:"diversi", h:false},
-            {b:"steal", p:"stole", pp:"stolen", t:"rubare", g:"diversi", h:false},
-            {b:"strew", p:"strewed", pp:"strewn", t:"cospargere", g:"diversi", h:true},
-            {b:"stride", p:"strode", pp:"stridden", t:"camminare a grandi passi", g:"diversi", h:true},
-            {b:"strive", p:"strove", pp:"striven", t:"sforzarsi", g:"diversi", h:true},
-            {b:"swear", p:"swore", pp:"sworn", t:"giurare", g:"diversi", h:true},
-            {b:"swell", p:"swelled", pp:"swollen", t:"gonfiare", g:"diversi", h:true},
-            {b:"tear", p:"tore", pp:"torn", t:"strappare", g:"diversi", h:false},
-            {b:"thrive", p:"throve", pp:"thriven", t:"prosperare", g:"diversi", h:true},
-            {b:"throw", p:"threw", pp:"thrown", t:"lanciare", g:"diversi", h:false},
-            {b:"tread", p:"trod", pp:"trodden", t:"calpestare", g:"diversi", h:true},
-            {b:"wake", p:"woke", pp:"woken", t:"svegliarsi", g:"diversi", h:false},
-            {b:"wear", p:"wore", pp:"worn", t:"indossare", g:"diversi", h:false},
-            {b:"weave", p:"wove", pp:"woven", t:"tessere", g:"diversi", h:true},
-            {b:"withdraw", p:"withdrew", pp:"withdrawn", t:"ritirarsi", g:"diversi", h:true},
-            {b:"write", p:"wrote", pp:"written", t:"scrivere", g:"diversi", h:false}
+            {b:"bring", p:"brought", pp:"brought", t:"portare", h:false},
+            {b:"buy", p:"bought", pp:"bought", t:"comprare", h:false},
+            {b:"catch", p:"caught", pp:"caught", t:"afferrare", h:false},
+            {b:"fight", p:"fought", pp:"fought", t:"combattere", h:false},
+            {b:"seek", p:"sought", pp:"sought", t:"cercare", h:true},
+            {b:"teach", p:"taught", pp:"taught", t:"insegnare", h:false},
+            // ABB
+            {b:"abide", p:"abode", pp:"abode", t:"dimorare", h:true},
+            {b:"awake", p:"awoke", pp:"awoke", t:"svegliare", h:true},
+            {b:"bend", p:"bent", pp:"bent", t:"piegare", h:false},
+            {b:"bleed", p:"bled", pp:"bled", t:"sanguinare", h:true},
+            {b:"breed", p:"bred", pp:"bred", t:"allevare", h:true},
+            {b:"build", p:"built", pp:"built", t:"costruire", h:false},
+            {b:"burn", p:"burnt", pp:"burnt", t:"bruciare", h:false},
+            {b:"cling", p:"clung", pp:"clung", t:"aggrapparsi", h:true},
+            {b:"creep", p:"crept", pp:"crept", t:"strisciare", h:true},
+            {b:"deal", p:"dealt", pp:"dealt", t:"trattare", h:false},
+            {b:"dig", p:"dug", pp:"dug", t:"scavare", h:false},
+            {b:"dream", p:"dreamt", pp:"dreamt", t:"sognare", h:false},
+            {b:"dwell", p:"dwelt", pp:"dwelt", t:"abitare", h:true},
+            {b:"feed", p:"fed", pp:"fed", t:"nutrire", h:false},
+            {b:"feel", p:"felt", pp:"felt", t:"sentire", h:false},
+            {b:"flee", p:"fled", pp:"fled", t:"fuggire", h:true},
+            {b:"fling", p:"flung", pp:"flung", t:"scagliare", h:true},
+            {b:"grind", p:"ground", pp:"ground", t:"macinare", h:true},
+            {b:"hang", p:"hung", pp:"hung", t:"appendere", h:false},
+            {b:"hear", p:"heard", pp:"heard", t:"udire", h:false},
+            {b:"hold", p:"held", pp:"held", t:"tenere", h:false},
+            {b:"keep", p:"kept", pp:"kept", t:"mantenere", h:false},
+            {b:"kneel", p:"knelt", pp:"knelt", t:"inginocchiarsi", h:true},
+            {b:"lay", p:"laid", pp:"laid", t:"distendere", h:true},
+            {b:"lead", p:"led", pp:"led", t:"guidare", h:false},
+            {b:"lean", p:"leant", pp:"leant", t:"appoggiarsi", h:true},
+            {b:"leap", p:"leapt", pp:"leapt", t:"saltare", h:true},
+            {b:"learn", p:"learnt", pp:"learnt", t:"imparare", h:false},
+            {b:"leave", p:"left", pp:"left", t:"lasciare", h:false},
+            {b:"lend", p:"lent", pp:"lent", t:"prestare", h:false},
+            {b:"light", p:"lit", pp:"lit", t:"accendere", h:false},
+            {b:"lose", p:"lost", pp:"lost", t:"perdere", h:false},
+            {b:"mean", p:"meant", pp:"meant", t:"significare", h:false},
+            {b:"meet", p:"met", pp:"met", t:"incontrare", h:false},
+            {b:"mislead", p:"misled", pp:"misled", t:"fuorviare", h:true},
+            {b:"pay", p:"paid", pp:"paid", t:"pagare", h:false},
+            {b:"plead", p:"pled", pp:"pled", t:"supplicare", h:true},
+            {b:"sell", p:"sold", pp:"sold", t:"vendere", h:false},
+            {b:"send", p:"sent", pp:"sent", t:"spedire", h:false},
+            {b:"shine", p:"shone", pp:"shone", t:"brillare", h:false},
+            {b:"shoot", p:"shot", pp:"shot", t:"sparare", h:false},
+            {b:"sit", p:"sat", pp:"sat", t:"sedersi", h:false},
+            {b:"sleep", p:"slept", pp:"slept", t:"dormire", h:false},
+            {b:"slide", p:"slid", pp:"slid", t:"scivolare", h:true},
+            {b:"sling", p:"slung", pp:"slung", t:"scagliare", h:true},
+            {b:"slink", p:"slunk", pp:"slunk", t:"strisciare via", h:true},
+            {b:"smell", p:"smelt", pp:"smelt", t:"odorare", h:false},
+            {b:"speed", p:"sped", pp:"sped", t:"accelerare", h:true},
+            {b:"spell", p:"spelt", pp:"spelt", t:"compitare", h:false},
+            {b:"spend", p:"spent", pp:"spent", t:"spendere", h:false},
+            {b:"spill", p:"spilt", pp:"spilt", t:"versare", h:false},
+            {b:"spin", p:"spun", pp:"spun", t:"ruotare", h:true},
+            {b:"spit", p:"spat", pp:"spat", t:"sputare", h:true},
+            {b:"spoil", p:"spoilt", pp:"spoilt", t:"rovinare", h:false},
+            {b:"stand", p:"stood", pp:"stood", t:"stare in piedi", h:false},
+            {b:"stick", p:"stuck", pp:"stuck", t:"incollare", h:false},
+            {b:"sting", p:"stung", pp:"stung", t:"pungere", h:true},
+            {b:"strike", p:"struck", pp:"struck", t:"colpire", h:false},
+            {b:"string", p:"strung", pp:"strung", t:"tendere", h:true},
+            {b:"sweep", p:"swept", pp:"swept", t:"spazzare", h:false},
+            {b:"swing", p:"swung", pp:"swung", t:"oscillare", h:true},
+            {b:"understand", p:"understood", pp:"understood", t:"capire", h:false},
+            {b:"weep", p:"wept", pp:"wept", t:"piangere", h:true},
+            {b:"win", p:"won", pp:"won", t:"vincere", h:false},
+            {b:"wind", p:"wound", pp:"wound", t:"avvolgere", h:true},
+            {b:"wring", p:"wrung", pp:"wrung", t:"strizzare", h:true},
+            // ABC
+            {b:"arise", p:"arose", pp:"arisen", t:"sorgere", h:true},
+            {b:"bear", p:"bore", pp:"born", t:"sopportare", h:true},
+            {b:"beat", p:"beat", pp:"beaten", t:"battere", h:false},
+            {b:"bite", p:"bit", pp:"bitten", t:"mordere", h:false},
+            {b:"blow", p:"blew", pp:"blown", t:"soffiare", h:false},
+            {b:"break", p:"broke", pp:"broken", t:"rompere", h:false},
+            {b:"choose", p:"chose", pp:"chosen", t:"scegliere", h:false},
+            {b:"draw", p:"drew", pp:"drawn", t:"disegnare", h:false},
+            {b:"drive", p:"drove", pp:"driven", t:"guidare", h:false},
+            {b:"eat", p:"ate", pp:"eaten", t:"mangiare", h:false},
+            {b:"fall", p:"fell", pp:"fallen", t:"cadere", h:false},
+            {b:"fly", p:"flew", pp:"flown", t:"volare", h:false},
+            {b:"forbid", p:"forbade", pp:"forbidden", t:"proibire", h:true},
+            {b:"forget", p:"forgot", pp:"forgotten", t:"dimenticare", h:false},
+            {b:"forgive", p:"forgave", pp:"forgiven", t:"perdonare", h:false},
+            {b:"freeze", p:"froze", pp:"frozen", t:"gelare", h:false},
+            {b:"hide", p:"hid", pp:"hidden", t:"nascondere", h:false},
+            {b:"lie", p:"lay", pp:"lain", t:"sdraiarsi", h:true},
+            {b:"mistake", p:"mistook", pp:"mistaken", t:"sbagliare", h:true},
+            {b:"mow", p:"mowed", pp:"mown", t:"falciare", h:true},
+            {b:"overtake", p:"overtook", pp:"overtaken", t:"sorpassare", h:true},
+            {b:"ride", p:"rode", pp:"ridden", t:"cavalcare", h:false},
+            {b:"rise", p:"rose", pp:"risen", t:"alzarsi", h:false},
+            {b:"saw", p:"sawed", pp:"sawn", t:"segare", h:true},
+            {b:"sew", p:"sewed", pp:"sewn", t:"cucire", h:true},
+            {b:"shake", p:"shook", pp:"shaken", t:"scuotere", h:false},
+            {b:"show", p:"showed", pp:"shown", t:"mostrare", h:false},
+            {b:"slay", p:"slew", pp:"slain", t:"uccidere", h:true},
+            {b:"speak", p:"spoke", pp:"spoken", t:"parlare", h:false},
+            {b:"steal", p:"stole", pp:"stolen", t:"rubare", h:false},
+            {b:"strew", p:"strewed", pp:"strewn", t:"cospargere", h:true},
+            {b:"stride", p:"strode", pp:"stridden", t:"camminare a grandi passi", h:true},
+            {b:"strive", p:"strove", pp:"striven", t:"sforzarsi", h:true},
+            {b:"swear", p:"swore", pp:"sworn", t:"giurare", h:true},
+            {b:"swell", p:"swelled", pp:"swollen", t:"gonfiare", h:true},
+            {b:"tear", p:"tore", pp:"torn", t:"strappare", h:false},
+            {b:"thrive", p:"throve", pp:"thriven", t:"prosperare", h:true},
+            {b:"throw", p:"threw", pp:"thrown", t:"lanciare", h:false},
+            {b:"tread", p:"trod", pp:"trodden", t:"calpestare", h:true},
+            {b:"wake", p:"woke", pp:"woken", t:"svegliarsi", h:false},
+            {b:"wear", p:"wore", pp:"worn", t:"indossare", h:false},
+            {b:"weave", p:"wove", pp:"woven", t:"tessere", h:true},
+            {b:"withdraw", p:"withdrew", pp:"withdrawn", t:"ritirarsi", h:true},
+            {b:"write", p:"wrote", pp:"written", t:"scrivere", h:false}
         ];
 
+        let current = null;
         let points = 0;
-        let currentVerb = null;
-        let isChecked = false;
-        let isHardMode = false;
+        let hardMode = false;
 
-        function initTable() {
-            const container = document.getElementById('tableContainer');
+        function initList() {
+            const container = document.getElementById('verbListContainer');
             container.innerHTML = "";
-            document.getElementById('verbCount').innerText = allVerbs.length;
-
-            Object.entries(groupsDef).forEach(([key, group]) => {
-                const section = document.createElement('div');
-                section.className = "mb-8";
-                
-                const table = document.createElement('table');
-                table.innerHTML = `
-                    <thead>
-                        <tr><th colspan="4" style="background:${group.text}">${group.title}</th></tr>
-                        <tr class="bg-slate-200 text-slate-600 font-bold">
-                            <td width="25%">Base Form</td>
-                            <td width="25%">Past Simple</td>
-                            <td width="25%">Past Participle</td>
-                            <td width="25%">Traduzione</td>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
+            verbs.forEach(v => {
+                const div = document.createElement('div');
+                div.className = `verb-card p-4 rounded-xl shadow-sm bg-white border border-slate-100 ${v.h ? 'hard-mode-active' : ''}`;
+                div.innerHTML = `
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-sm font-black text-indigo-600 uppercase tracking-tighter">${v.b}</span>
+                        ${v.h ? '<span class="text-xs">🔥</span>' : ''}
+                    </div>
+                    <div class="text-xs text-slate-400 font-mono mb-2">${v.p} • ${v.pp}</div>
+                    <div class="text-[10px] font-bold text-slate-600 uppercase">${v.t}</div>
                 `;
-
-                const tbody = table.querySelector('tbody');
-                allVerbs.filter(v => v.g === key).forEach(v => {
-                    const tr = document.createElement('tr');
-                    tr.style.backgroundColor = v.h ? '#fff1f2' : group.bg;
-                    if(v.h) tr.classList.add('hard-row');
-                    tr.innerHTML = `
-                        <td class="font-bold">${v.b}</td>
-                        <td>${v.p}</td>
-                        <td>${v.pp}</td>
-                        <td>${v.t} ${v.h ? '🔥' : ''}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-                section.appendChild(table);
-                container.appendChild(section);
+                container.appendChild(div);
             });
         }
 
         function toggleHardMode() {
-            isHardMode = document.getElementById('hardModeToggle').checked;
-            const header = document.getElementById('quizHeader');
-            const title = document.getElementById('quizTitle');
-            
-            if(isHardMode) {
-                header.classList.replace('bg-slate-800', 'bg-red-800');
-                title.innerText = "🔥 Hard Mode Active";
-            } else {
-                header.classList.replace('bg-red-800', 'bg-slate-800');
-                title.innerText = "📚 Verb Master Pro";
-            }
-            newQuestion();
+            hardMode = !hardMode;
+            document.getElementById('toggleDot').style.left = hardMode ? '26px' : '4px';
+            document.getElementById('hardToggle').classList.toggle('bg-red-500');
+            nextQuestion();
         }
 
-        function newQuestion() {
-            isChecked = false;
-            const pool = isHardMode ? allVerbs.filter(v => v.h) : allVerbs.filter(v => !v.h);
-            currentVerb = pool[Math.floor(Math.random() * pool.length)];
+        function nextQuestion() {
+            const pool = hardMode ? verbs.filter(v => v.h) : verbs;
+            current = pool[Math.floor(Math.random() * pool.length)];
             
-            const mode = ['t', 'b', 'p', 'pp'][Math.floor(Math.random() * 4)];
-            document.getElementById('quizFeedback').classList.add('hidden');
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('qPrompt').innerText = current.t.toUpperCase();
             
-            ['qBase', 'qPast', 'qPart'].forEach(id => {
+            ['inBase', 'inPast', 'inPart'].forEach(id => {
                 const el = document.getElementById(id);
-                el.value = ""; el.disabled = false;
-                el.className = "quiz-input w-full border-2 border-slate-200 p-4 rounded-2xl text-center font-bold text-xl outline-none";
+                el.value = "";
+                el.classList.remove('border-emerald-500', 'border-rose-500');
             });
+            document.getElementById('inBase').focus();
+        }
 
-            if (mode === 't') {
-                document.getElementById('quizInstruction').innerText = "Traduci:";
-                document.getElementById('targetHint').innerText = currentVerb.t.toUpperCase();
-            } else if (mode === 'b') {
-                document.getElementById('quizInstruction').innerText = "Dalla Base Form:";
-                document.getElementById('targetHint').innerText = currentVerb.b;
-                fillAndLock('qBase', currentVerb.b);
-            } else if (mode === 'p') {
-                document.getElementById('quizInstruction').innerText = "Dal Past Simple:";
-                document.getElementById('targetHint').innerText = currentVerb.p;
-                fillAndLock('qPast', currentVerb.p);
-            } else {
-                document.getElementById('quizInstruction').innerText = "Dal Past Participle:";
-                document.getElementById('targetHint').innerText = currentVerb.pp;
-                fillAndLock('qPart', currentVerb.pp);
-            }
+        function checkAnswer() {
+            const b = document.getElementById('inBase').value.trim().toLowerCase();
+            const p = document.getElementById('inPast').value.trim().toLowerCase();
+            const pp = document.getElementById('inPart').value.trim().toLowerCase();
+
+            const isB = current.b.split('/').includes(b);
+            const isP = current.p.split('/').includes(p);
+            const isPP = current.pp.split('/').includes(pp);
+
+            const fd = document.getElementById('feedback');
             
-            setTimeout(() => document.querySelector('.quiz-input:not(:disabled)')?.focus(), 100);
-        }
-
-        function fillAndLock(id, val) {
-            const el = document.getElementById(id);
-            el.value = val; el.disabled = true; el.classList.add('given-form');
-        }
-
-        function checkQuiz() {
-            if(isChecked) return;
-            isChecked = true;
-
-            const userB = document.getElementById('qBase').value.trim().toLowerCase();
-            const userP = document.getElementById('qPast').value.trim().toLowerCase();
-            const userPP = document.getElementById('qPart').value.trim().toLowerCase();
-
-            const correctB = currentVerb.b.toLowerCase().split('/').includes(userB);
-            const correctP = currentVerb.p.toLowerCase().split('/').includes(userP);
-            const correctPP = currentVerb.pp.toLowerCase().split('/').includes(userPP);
-
-            const feedback = document.getElementById('quizFeedback');
-            feedback.classList.remove('hidden');
-
-            if(correctB && correctP && correctPP) {
-                feedback.innerText = "ECCELLENTE! +10 Punti 🏆";
-                feedback.className = "mb-8 p-5 rounded-2xl text-center font-bold text-lg text-emerald-600 bg-emerald-50";
+            if(isB && isP && isPP) {
+                fd.innerText = "CORRETTO! +10";
+                fd.className = "h-12 flex items-center justify-center font-bold text-lg mb-6 text-emerald-400";
                 points += 10;
+                setTimeout(nextQuestion, 1000);
             } else {
-                feedback.innerHTML = `Ops! La risposta era: <br> <span class="text-slate-800 text-xl">${currentVerb.b} - ${currentVerb.p} - ${currentVerb.pp}</span>`;
-                feedback.className = "mb-8 p-5 rounded-2xl text-center font-bold text-lg text-rose-600 bg-rose-50";
+                fd.innerHTML = `SBAGLIATO! Corretto: ${current.b} - ${current.p} - ${current.pp}`;
+                fd.className = "h-12 flex items-center justify-center font-bold text-lg mb-6 text-rose-400";
                 points = Math.max(0, points - 5);
             }
-            
-            document.getElementById('scoreCounter').innerText = points.toString().padStart(3, '0');
-            
-            // Colora i campi singolarmente
-            document.getElementById('qBase').classList.add(correctB ? 'bg-emerald-50' : 'bg-rose-50');
-            document.getElementById('qPast').classList.add(correctP ? 'bg-emerald-50' : 'bg-rose-50');
-            document.getElementById('qPart').classList.add(correctPP ? 'bg-emerald-50' : 'bg-rose-50');
+            document.getElementById('score').innerText = points;
         }
 
-        function downloadImage() {
-            const btn = document.querySelector('button[onclick="downloadImage()"]');
-            btn.innerText = "ELABORAZIONE...";
-            html2canvas(document.querySelector("#captureArea"), { scale: 1.5, useCORS: true }).then(canvas => {
+        function giveHint() {
+            const b = document.getElementById('inBase');
+            const p = document.getElementById('inPast');
+            const pp = document.getElementById('inPart');
+
+            if(!b.value) b.value = current.b[0] + "...";
+            else if(!p.value) p.value = current.p[0] + "...";
+            else if(!pp.value) pp.value = current.pp[0] + "...";
+            points = Math.max(0, points - 2);
+            document.getElementById('score').innerText = points;
+        }
+
+        function saveImage() {
+            const container = document.getElementById('verbListContainer');
+            html2canvas(container).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'lista_140_verbi_irregolari.png';
+                link.download = 'lista-verbi-irregolari.png';
                 link.href = canvas.toDataURL();
                 link.click();
-                btn.innerText = "📸 SALVA COME IMMAGINE";
             });
         }
 
-        document.addEventListener('keydown', e => {
-            if(e.key === 'Enter') isChecked ? newQuestion() : checkQuiz();
+        // Scorciatoie da tastiera
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') checkAnswer();
+            if (e.altKey && e.key === '1') document.getElementById('inBase').value = current.b;
+            if (e.altKey && e.key === '2') document.getElementById('inPast').value = current.p;
+            if (e.altKey && e.key === '3') document.getElementById('inPart').value = current.pp;
         });
 
         window.onload = () => {
-            initTable();
-            newQuestion();
+            initList();
+            nextQuestion();
         };
     </script>
 </body>

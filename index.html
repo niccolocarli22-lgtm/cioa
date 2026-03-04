@@ -3,10 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabella Verbi Irregolari Completa</title>
+    <title>Verbi Irregolari - Quiz & Tabella Completa</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Stili della tabella */
+        table { border-collapse: collapse; width: 100%; font-size: 14px; }
+        th { position: sticky; top: 0; background-color: #4f46e5; color: white; z-index: 10; }
+        td, th { border: 1px solid #cbd5e1; padding: 10px; }
+        
+        .given-form {
+            background-color: #f3f4f6 !important;
+            color: #4b5563 !important;
+            cursor: not-allowed;
+        }
+
+        .hard-mode-active {
+            border-color: #dc2626 !important;
+            background-color: #fef2f2;
+        }
+
+        /* Colori Gruppi */
         .gr-viola { background-color: #e5d1ff; }
         .gr-verde { background-color: #d1f7d1; }
         .gr-azzurro { background-color: #d1e9ff; }
@@ -14,139 +31,97 @@
         .gr-rosso { background-color: #ffd1d1; }
         .gr-grigio { background-color: #f2f2f2; }
         .gr-arancio { background-color: #ffead1; }
-        
-        table { border-collapse: collapse; width: 100%; font-size: 10px; line-height: 1.1; }
-        th, td { border: 1px solid #666; padding: 3px 4px; text-align: left; }
-        th { background-color: #4f46e5; color: white; text-transform: uppercase; font-size: 9px; }
-        .header-title { border-bottom: 2px solid #333; margin-bottom: 8px; text-align: center; font-weight: bold; font-size: 14px; color: #1e1b4b; }
+
+        @media print {
+            .no-print { display: none !important; }
+            table { font-size: 10pt !important; width: 100% !important; }
+        }
     </style>
 </head>
-<body class="bg-gray-200 p-2">
+<body class="bg-gray-100 p-4 md:p-8 font-sans">
 
-    <div class="flex flex-col items-center mb-4 no-print">
-        <button onclick="downloadImage()" class="bg-indigo-600 text-white px-8 py-3 rounded-full font-bold shadow-xl hover:bg-indigo-700 transition-transform active:scale-95">
-            📸 SALVA COME IMMAGINE (FOTO)
-        </button>
-        <p class="text-xs text-gray-600 mt-2">Dopo aver cliccato, troverai la foto nei "Download" o nella Galleria.</p>
+    <!-- SEZIONE QUIZ INTERATTIVO -->
+    <div class="max-w-5xl mx-auto mb-10 no-print">
+        <div id="quizBox" class="bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-indigo-600 transition-all duration-300">
+            <div id="quizHeader" class="bg-indigo-600 p-5 text-white flex justify-between items-center transition-colors">
+                <div class="flex flex-col">
+                    <h2 id="quizTitle" class="text-xl font-bold flex items-center gap-2">🧠 Quiz Verbi Irregolari</h2>
+                    <span class="text-xs opacity-80">[Spazio] Prossima casella | [Invio] Controlla / Prossimo</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 bg-black/20 p-2 rounded-lg">
+                        <span class="text-xs font-bold uppercase">Difficile</span>
+                        <input type="checkbox" id="hardModeToggle" onchange="toggleHardMode()" class="w-5 h-5 cursor-pointer">
+                    </div>
+                    <span id="scoreCounter" class="bg-indigo-800 px-3 py-1 rounded-full text-sm font-mono font-bold">Punti: 0</span>
+                </div>
+            </div>
+            
+            <div class="p-8 text-center">
+                <div class="mb-6">
+                    <span id="quizInstruction" class="text-gray-500 text-sm uppercase font-bold tracking-widest">Indizio:</span>
+                    <h3 id="targetHint" class="text-4xl font-black text-gray-800 mt-2 italic">---</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-bold text-gray-400 uppercase">Base Form</label>
+                        <div class="relative">
+                            <input id="qBase" type="text" autocomplete="off" class="quiz-input w-full border-2 border-gray-200 p-3 rounded-xl text-center font-bold focus:border-indigo-500 outline-none transition-all" placeholder="...">
+                            <button onclick="showHint()" title="Aiuto" class="absolute right-2 top-1/2 -translate-y-1/2 text-yellow-500 hover:scale-110 transition-transform focus:outline-none">💡</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-bold text-gray-400 uppercase">Past Simple</label>
+                        <input id="qPast" type="text" autocomplete="off" class="quiz-input w-full border-2 border-gray-200 p-3 rounded-xl text-center font-bold focus:border-indigo-500 outline-none transition-all" placeholder="...">
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-bold text-gray-400 uppercase">Past Participle</label>
+                        <input id="qPart" type="text" autocomplete="off" class="quiz-input w-full border-2 border-gray-200 p-3 rounded-xl text-center font-bold focus:border-indigo-500 outline-none transition-all" placeholder="...">
+                    </div>
+                </div>
+
+                <div id="tradDisplay" class="mb-6 text-indigo-500 font-bold hidden">
+                    Traduzione: <span id="valTrad">---</span>
+                </div>
+
+                <div id="quizFeedback" class="hidden mb-6 p-4 rounded-xl text-lg font-bold flex flex-col items-center gap-3"></div>
+
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button id="btnCheck" onclick="checkQuiz()" class="bg-green-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-600 shadow-lg transition-all active:scale-95">CONTROLLA ✅</button>
+                    <button id="btnNext" onclick="newQuestion()" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg transition-all active:scale-95">PROSSIMO ➡️</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- AREA DA CATTURARE -->
-    <div id="captureArea" class="bg-white p-4 mx-auto shadow-2xl" style="width: 900px;">
-        <div class="header-title">SCHEMA COMPLETO VERBI IRREGOLARI (Tutti i gruppi)</div>
-        
-        <div class="grid grid-cols-3 gap-3">
-            <!-- COLONNA 1 -->
-            <div>
-                <table>
-                    <thead><tr><th>Base</th><th>Past</th><th>Part.</th></tr></thead>
-                    <tbody>
-                        <tr class="gr-viola"><td>Be</td><td>was/were</td><td>been</td></tr>
-                        <tr class="gr-viola"><td>Do</td><td>did</td><td>done</td></tr>
-                        <tr class="gr-viola"><td>Go</td><td>went</td><td>gone/been</td></tr>
-                        <tr class="gr-viola"><td>Can</td><td>could</td><td>been able</td></tr>
-                        <tr class="gr-verde"><td>Cost</td><td>cost</td><td>cost</td></tr>
-                        <tr class="gr-verde"><td>Cut</td><td>cut</td><td>cut</td></tr>
-                        <tr class="gr-verde"><td>Hit</td><td>hit</td><td>hit</td></tr>
-                        <tr class="gr-verde"><td>Hurt</td><td>hurt</td><td>hurt</td></tr>
-                        <tr class="gr-verde"><td>Let</td><td>let</td><td>let</td></tr>
-                        <tr class="gr-verde"><td>Put</td><td>put</td><td>put</td></tr>
-                        <tr class="gr-verde"><td>Read</td><td>read</td><td>read</td></tr>
-                        <tr class="gr-verde"><td>Shut</td><td>shut</td><td>shut</td></tr>
-                        <tr class="gr-verde"><td>Split</td><td>split</td><td>split</td></tr>
-                        <tr class="gr-verde"><td>Upset</td><td>upset</td><td>upset</td></tr>
-                        <tr class="gr-azzurro"><td>Bring</td><td>brought</td><td>brought</td></tr>
-                        <tr class="gr-azzurro"><td>Buy</td><td>bought</td><td>bought</td></tr>
-                        <tr class="gr-azzurro"><td>Catch</td><td>caught</td><td>caught</td></tr>
-                        <tr class="gr-azzurro"><td>Fight</td><td>fought</td><td>fought</td></tr>
-                        <tr class="gr-azzurro"><td>Teach</td><td>taught</td><td>taught</td></tr>
-                        <tr class="gr-azzurro"><td>Think</td><td>thought</td><td>thought</td></tr>
-                        <tr class="gr-giallo"><td>Begin</td><td>began</td><td>begun</td></tr>
-                        <tr class="gr-giallo"><td>Drink</td><td>drank</td><td>drunk</td></tr>
-                        <tr class="gr-giallo"><td>Ring</td><td>rang</td><td>rung</td></tr>
-                    </tbody>
-                </table>
-            </div>
+    <!-- AREA TABELLA E CATTURA IMMAGINE -->
+    <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-4 no-print">
+            <h2 class="text-2xl font-bold text-gray-800">Tutti i Verbi Irregolari</h2>
+            <button onclick="downloadImage()" class="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold shadow-lg hover:bg-indigo-700 active:scale-95 transition-all">
+                📸 SALVA COME FOTO
+            </button>
+        </div>
 
-            <!-- COLONNA 2 -->
-            <div>
-                <table>
-                    <thead><tr><th>Base</th><th>Past</th><th>Part.</th></tr></thead>
-                    <tbody>
-                        <tr class="gr-giallo"><td>Sing</td><td>sang</td><td>sung</td></tr>
-                        <tr class="gr-giallo"><td>Sink</td><td>sank</td><td>sunk</td></tr>
-                        <tr class="gr-giallo"><td>Swim</td><td>swam</td><td>swum</td></tr>
-                        <tr class="gr-rosso"><td>Beat</td><td>beat</td><td>beaten</td></tr>
-                        <tr class="gr-rosso"><td>Bite</td><td>bit</td><td>bitten</td></tr>
-                        <tr class="gr-rosso"><td>Blow</td><td>blew</td><td>blown</td></tr>
-                        <tr class="gr-rosso"><td>Break</td><td>broke</td><td>broken</td></tr>
-                        <tr class="gr-rosso"><td>Choose</td><td>chose</td><td>chosen</td></tr>
-                        <tr class="gr-rosso"><td>Draw</td><td>drew</td><td>drawn</td></tr>
-                        <tr class="gr-rosso"><td>Drive</td><td>drove</td><td>driven</td></tr>
-                        <tr class="gr-rosso"><td>Eat</td><td>ate</td><td>eaten</td></tr>
-                        <tr class="gr-rosso"><td>Fall</td><td>fell</td><td>fallen</td></tr>
-                        <tr class="gr-rosso"><td>Fly</td><td>flew</td><td>flown</td></tr>
-                        <tr class="gr-rosso"><td>Forget</td><td>forgot</td><td>forgotten</td></tr>
-                        <tr class="gr-rosso"><td>Freeze</td><td>froze</td><td>frozen</td></tr>
-                        <tr class="gr-rosso"><td>Give</td><td>gave</td><td>given</td></tr>
-                        <tr class="gr-rosso"><td>Grow</td><td>grew</td><td>grown</td></tr>
-                        <tr class="gr-rosso"><td>Hide</td><td>hid</td><td>hidden</td></tr>
-                        <tr class="gr-rosso"><td>Know</td><td>knew</td><td>known</td></tr>
-                        <tr class="gr-rosso"><td>Ride</td><td>rode</td><td>ridden</td></tr>
-                        <tr class="gr-rosso"><td>Rise</td><td>rose</td><td>risen</td></tr>
-                        <tr class="gr-rosso"><td>See</td><td>saw</td><td>seen</td></tr>
-                        <tr class="gr-rosso"><td>Shake</td><td>shook</td><td>shaken</td></tr>
-                    </tbody>
-                </table>
+        <div id="captureArea" class="bg-white shadow-2xl rounded-xl overflow-hidden border border-gray-200 p-4">
+            <div class="bg-gray-800 p-4 text-white text-center rounded-t-lg mb-4">
+                <h1 class="text-xl font-bold uppercase tracking-widest">Schema Completo Verbi Irregolari</h1>
+                <p class="text-xs text-gray-400">🔥 = Verbi Avanzati (Hard Mode)</p>
             </div>
-
-            <!-- COLONNA 3 -->
-            <div>
-                <table>
-                    <thead><tr><th>Base</th><th>Past</th><th>Part.</th></tr></thead>
-                    <tbody>
-                        <tr class="gr-rosso"><td>Speak</td><td>spoke</td><td>spoken</td></tr>
-                        <tr class="gr-rosso"><td>Steal</td><td>stole</td><td>stolen</td></tr>
-                        <tr class="gr-rosso"><td>Take</td><td>took</td><td>taken</td></tr>
-                        <tr class="gr-rosso"><td>Throw</td><td>threw</td><td>thrown</td></tr>
-                        <tr class="gr-rosso"><td>Wake</td><td>woke</td><td>woken</td></tr>
-                        <tr class="gr-rosso"><td>Wear</td><td>wore</td><td>worn</td></tr>
-                        <tr class="gr-rosso"><td>Write</td><td>wrote</td><td>written</td></tr>
-                        <tr class="gr-grigio"><td>Build</td><td>built</td><td>built</td></tr>
-                        <tr class="gr-grigio"><td>Burn</td><td>burnt</td><td>burnt</td></tr>
-                        <tr class="gr-grigio"><td>Deal</td><td>dealt</td><td>dealt</td></tr>
-                        <tr class="gr-grigio"><td>Dream</td><td>dreamt</td><td>dreamt</td></tr>
-                        <tr class="gr-grigio"><td>Feel</td><td>felt</td><td>felt</td></tr>
-                        <tr class="gr-grigio"><td>Find</td><td>found</td><td>found</td></tr>
-                        <tr class="gr-grigio"><td>Get</td><td>got</td><td>got</td></tr>
-                        <tr class="gr-grigio"><td>Have</td><td>had</td><td>had</td></tr>
-                        <tr class="gr-grigio"><td>Hear</td><td>heard</td><td>heard</td></tr>
-                        <tr class="gr-grigio"><td>Hold</td><td>held</td><td>held</td></tr>
-                        <tr class="gr-grigio"><td>Keep</td><td>kept</td><td>kept</td></tr>
-                        <tr class="gr-grigio"><td>Learn</td><td>learnt</td><td>learnt</td></tr>
-                        <tr class="gr-grigio"><td>Leave</td><td>left</td><td>left</td></tr>
-                        <tr class="gr-grigio"><td>Lend</td><td>lent</td><td>lent</td></tr>
-                        <tr class="gr-grigio"><td>Light</td><td>lit</td><td>lit</td></tr>
-                        <tr class="gr-grigio"><td>Lose</td><td>lost</td><td>lost</td></tr>
-                        <tr class="gr-grigio"><td>Make</td><td>made</td><td>made</td></tr>
-                        <tr class="gr-grigio"><td>Mean</td><td>meant</td><td>meant</td></tr>
-                        <tr class="gr-grigio"><td>Meet</td><td>met</td><td>met</td></tr>
-                        <tr class="gr-grigio"><td>Pay</td><td>paid</td><td>paid</td></tr>
-                        <tr class="gr-grigio"><td>Say</td><td>said</td><td>said</td></tr>
-                        <tr class="gr-grigio"><td>Sell</td><td>sold</td><td>sold</td></tr>
-                        <tr class="gr-grigio"><td>Send</td><td>sent</td><td>sent</td></tr>
-                        <tr class="gr-grigio"><td>Shoot</td><td>shot</td><td>shot</td></tr>
-                        <tr class="gr-grigio"><td>Sit</td><td>sat</td><td>sat</td></tr>
-                        <tr class="gr-grigio"><td>Sleep</td><td>slept</td><td>slept</td></tr>
-                        <tr class="gr-grigio"><td>Smell</td><td>smelt</td><td>smelt</td></tr>
-                        <tr class="gr-grigio"><td>Spend</td><td>spent</td><td>spent</td></tr>
-                        <tr class="gr-grigio"><td>Spoil</td><td>spoilt</td><td>spoilt</td></tr>
-                        <tr class="gr-grigio"><td>Stand</td><td>stood</td><td>stood</td></tr>
-                        <tr class="gr-grigio"><td>Tell</td><td>told</td><td>told</td></tr>
-                        <tr class="gr-grigio"><td>Understand</td><td>understood</td><td>understood</td></tr>
-                        <tr class="gr-grigio"><td>Win</td><td>won</td><td>won</td></tr>
-                        <tr class="gr-arancio"><td>Become</td><td>became</td><td>become</td></tr>
-                        <tr class="gr-arancio"><td>Come</td><td>came</td><td>come</td></tr>
-                        <tr class="gr-arancio"><td>Run</td><td>ran</td><td>run</td></tr>
+            
+            <div class="overflow-x-auto">
+                <table id="fullTable">
+                    <thead>
+                        <tr>
+                            <th>Base Form</th>
+                            <th>Past Simple</th>
+                            <th>Past Participle</th>
+                            <th>Traduzione</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Generato via JS -->
                     </tbody>
                 </table>
             </div>
@@ -154,21 +129,219 @@
     </div>
 
     <script>
+        const groupsDef = {
+            'fondamentali': { title: 'Verbi Fondamentali', bg: '#e5d1ff', text: '#6b21a8' },
+            'invariati': { title: '1. Invariati (Tutte Uguali)', bg: '#d1f7d1', text: '#166534' },
+            'basepart':  { title: '2. Base = Participio', bg: '#ffead1', text: '#9a3412' },
+            'iau':       { title: '3. Cambio Vocale (I - A - U)', bg: '#fff4cc', text: '#854d0e' },
+            'ought':     { title: '4. Terminazione -OUGHT/-AUGHT', bg: '#d1e9ff', text: '#1e40af' },
+            'identici':  { title: '5. Past Simple = Participio', bg: '#f2f2f2', text: '#374151' },
+            'diversi':   { title: '6. Tutti Diversi (-EN)', bg: '#ffd1d1', text: '#991b1b' }
+        };
+
+        const allVerbs = [
+            {b:"be", p:"was/were", pp:"been", t:"essere", g:"fondamentali", hard:false},
+            {b:"do", p:"did", pp:"done", t:"fare", g:"fondamentali", hard:false},
+            {b:"go", p:"went", pp:"gone", t:"andare", g:"fondamentali", hard:false},
+            {b:"can", p:"could", pp:"been able", t:"potere", g:"fondamentali", hard:false},
+
+            {b:"cost", p:"cost", pp:"cost", t:"costare", g:"invariati", hard:false},
+            {b:"cut", p:"cut", pp:"cut", t:"tagliare", g:"invariati", hard:false},
+            {b:"hit", p:"hit", pp:"hit", t:"colpire", g:"invariati", hard:false},
+            {b:"hurt", p:"hurt", pp:"hurt", t:"farsi male", g:"invariati", hard:false},
+            {b:"let", p:"let", pp:"let", t:"permettere", g:"invariati", hard:false},
+            {b:"put", p:"put", pp:"put", t:"mettere", g:"invariati", hard:false},
+            {b:"read", p:"read", pp:"read", t:"leggere", g:"invariati", hard:false},
+            {b:"shut", p:"shut", pp:"shut", t:"chiudere", g:"invariati", hard:false},
+            {b:"split", p:"split", pp:"split", t:"dividere", g:"invariati", hard:true},
+
+            {b:"become", p:"became", pp:"become", t:"diventare", g:"basepart", hard:false},
+            {b:"come", p:"came", pp:"come", t:"venire", g:"basepart", hard:false},
+            {b:"run", p:"ran", pp:"run", t:"correre", g:"basepart", hard:false},
+
+            {b:"begin", p:"began", pp:"begun", t:"iniziare", g:"iau", hard:false},
+            {b:"drink", p:"drank", pp:"drunk", t:"bere", g:"iau", hard:false},
+            {b:"ring", p:"rang", pp:"rung", t:"suonare", g:"iau", hard:false},
+            {b:"sing", p:"sang", pp:"sung", t:"cantare", g:"iau", hard:false},
+            {b:"swim", p:"swam", pp:"swum", t:"nuotare", g:"iau", hard:false},
+
+            {b:"bring", p:"brought", pp:"brought", t:"portare", g:"ought", hard:false},
+            {b:"buy", p:"bought", pp:"bought", t:"comprare", g:"ought", hard:false},
+            {b:"catch", p:"caught", pp:"caught", t:"afferrare", g:"ought", hard:false},
+            {b:"fight", p:"fought", pp:"fought", t:"combattere", g:"ought", hard:false},
+            {b:"teach", p:"taught", pp:"taught", t:"insegnare", g:"ought", hard:false},
+            {b:"think", p:"thought", pp:"thought", t:"pensare", g:"ought", hard:false},
+
+            {b:"build", p:"built", pp:"built", t:"costruire", g:"identici", hard:false},
+            {b:"feel", p:"felt", pp:"felt", t:"sentire", g:"identici", hard:false},
+            {b:"find", p:"found", pp:"found", t:"trovare", g:"identici", hard:false},
+            {b:"get", p:"got", pp:"got", t:"ottenere", g:"identici", hard:false},
+            {b:"have", p:"had", pp:"had", t:"avere", g:"identici", hard:false},
+            {b:"hear", p:"heard", pp:"heard", t:"udire", g:"identici", hard:false},
+            {b:"keep", p:"kept", pp:"kept", t:"mantenere", g:"identici", hard:false},
+            {b:"leave", p:"left", pp:"left", t:"lasciare", g:"identici", hard:false},
+            {b:"make", p:"made", pp:"made", t:"fare", g:"identici", hard:false},
+            {b:"meet", p:"met", pp:"met", t:"incontrare", g:"identici", hard:false},
+            {b:"say", p:"said", pp:"said", t:"dire", g:"identici", hard:false},
+            {b:"send", p:"sent", pp:"sent", t:"spedire", g:"identici", hard:false},
+            {b:"sleep", p:"slept", pp:"slept", t:"dormire", g:"identici", hard:false},
+            {b:"tell", p:"told", pp:"told", t:"raccontare", g:"identici", hard:false},
+            {b:"win", p:"won", pp:"won", t:"vincere", g:"identici", hard:false},
+
+            {b:"break", p:"broke", pp:"broken", t:"rompere", g:"diversi", hard:false},
+            {b:"choose", p:"chose", pp:"chosen", t:"scegliere", g:"diversi", hard:false},
+            {b:"drive", p:"drove", pp:"driven", t:"guidare", g:"diversi", hard:false},
+            {b:"eat", p:"ate", pp:"eaten", t:"mangiare", g:"diversi", hard:false},
+            {b:"fall", p:"fell", pp:"fallen", t:"cadere", g:"diversi", hard:false},
+            {b:"fly", p:"flew", pp:"flown", t:"volare", g:"diversi", hard:false},
+            {b:"forget", p:"forgot", pp:"forgotten", t:"dimenticare", g:"diversi", hard:false},
+            {b:"give", p:"gave", pp:"given", t:"dare", g:"diversi", hard:false},
+            {b:"know", p:"knew", pp:"known", t:"sapere", g:"diversi", hard:false},
+            {b:"see", p:"saw", pp:"seen", t:"vedere", g:"diversi", hard:false},
+            {b:"speak", p:"spoke", pp:"spoken", t:"parlare", g:"diversi", hard:false},
+            {b:"take", p:"took", pp:"taken", t:"prendere", g:"diversi", hard:false},
+            {b:"write", p:"wrote", pp:"written", t:"scrivere", g:"diversi", hard:false}
+        ];
+
+        let points = 0;
+        let currentVerb = null;
+        let isChecked = false;
+        let isHardMode = false;
+
+        // INIZIALIZZAZIONE TABELLA
+        const tbody = document.getElementById('tableBody');
+        Object.entries(groupsDef).forEach(([key, group]) => {
+            const hRow = document.createElement('tr');
+            hRow.innerHTML = `<td colspan="4" class="text-center font-bold text-white uppercase bg-gray-700 py-2">${group.title}</td>`;
+            tbody.appendChild(hRow);
+
+            allVerbs.filter(v => v.g === key).forEach(v => {
+                const row = document.createElement('tr');
+                row.style.backgroundColor = group.bg;
+                row.innerHTML = `<td class="font-bold">${v.b}</td><td>${v.p}</td><td>${v.pp}</td><td class="italic">${v.t} ${v.hard ? '🔥' : ''}</td>`;
+                tbody.appendChild(row);
+            });
+        });
+
+        function toggleHardMode() {
+            isHardMode = document.getElementById('hardModeToggle').checked;
+            const quizBox = document.getElementById('quizBox');
+            const quizHeader = document.getElementById('quizHeader');
+            const quizTitle = document.getElementById('quizTitle');
+
+            if(isHardMode) {
+                quizBox.classList.add('hard-mode-active');
+                quizHeader.classList.replace('bg-indigo-600', 'bg-red-700');
+                quizTitle.innerText = "🔥 Quiz Verbi - HARD MODE";
+            } else {
+                quizBox.classList.remove('hard-mode-active');
+                quizHeader.classList.replace('bg-red-700', 'bg-indigo-600');
+                quizTitle.innerText = "🧠 Quiz Verbi Irregolari";
+            }
+            newQuestion();
+        }
+
+        function newQuestion() {
+            isChecked = false;
+            const pool = isHardMode ? allVerbs : allVerbs.filter(v => !v.hard);
+            currentVerb = pool[Math.floor(Math.random() * pool.length)];
+            
+            const modes = ['t', 'b', 'p', 'pp'];
+            const mode = modes[Math.floor(Math.random() * modes.length)];
+
+            document.getElementById('quizFeedback').classList.add('hidden');
+            ['qBase', 'qPast', 'qPart'].forEach(id => {
+                const el = document.getElementById(id);
+                el.value = ""; el.disabled = false;
+                el.classList.remove('given-form', 'bg-green-100', 'bg-red-100', 'text-indigo-600');
+            });
+
+            if (mode === 't') {
+                document.getElementById('quizInstruction').innerText = "Traduci in inglese:";
+                document.getElementById('targetHint').innerText = currentVerb.t.toUpperCase();
+            } else if (mode === 'b') {
+                document.getElementById('quizInstruction').innerText = "Dalla Base Form:";
+                document.getElementById('targetHint').innerText = currentVerb.b;
+                fillAndLock('qBase', currentVerb.b);
+            } else if (mode === 'p') {
+                document.getElementById('quizInstruction').innerText = "Dal Past Simple:";
+                document.getElementById('targetHint').innerText = currentVerb.p;
+                fillAndLock('qPast', currentVerb.p);
+            } else {
+                document.getElementById('quizInstruction').innerText = "Dal Past Participle:";
+                document.getElementById('targetHint').innerText = currentVerb.pp;
+                fillAndLock('qPart', currentVerb.pp);
+            }
+
+            document.getElementById('tradDisplay').classList.toggle('hidden', mode === 't');
+            document.getElementById('valTrad').innerText = currentVerb.t;
+
+            setTimeout(() => { document.querySelector('.quiz-input:not(:disabled)')?.focus(); }, 50);
+        }
+
+        function fillAndLock(id, val) {
+            const el = document.getElementById(id);
+            el.value = val; el.disabled = true; el.classList.add('given-form');
+        }
+
+        function showHint() {
+            const el = document.getElementById('qBase');
+            if(!el.disabled) { el.value = currentVerb.b; el.classList.add('text-indigo-600'); }
+        }
+
+        function checkQuiz() {
+            if(isChecked) return;
+            isChecked = true;
+            const b = document.getElementById('qBase').value.trim().toLowerCase();
+            const p = document.getElementById('qPast').value.trim().toLowerCase();
+            const pp = document.getElementById('qPart').value.trim().toLowerCase();
+            
+            const isB = b === currentVerb.b.toLowerCase() || currentVerb.b.toLowerCase().split('/').includes(b);
+            const isP = p === currentVerb.p.toLowerCase() || currentVerb.p.toLowerCase().split('/').includes(p);
+            const isPP = pp === currentVerb.pp.toLowerCase() || currentVerb.pp.toLowerCase().split('/').includes(pp);
+
+            ['qBase', 'qPast', 'qPart'].forEach((id, i) => {
+                const el = document.getElementById(id);
+                if(!el.disabled) el.classList.add([isB, isP, isPP][i] ? 'bg-green-100' : 'bg-red-100');
+            });
+
+            const feedback = document.getElementById('quizFeedback');
+            const grp = groupsDef[currentVerb.g];
+            feedback.classList.remove('hidden');
+            const badge = `<div class="px-4 py-1 mt-2 rounded-full text-xs font-bold" style="background:${grp.bg}; color:${grp.text}">Gruppo: ${grp.title}</div>`;
+
+            if(isB && isP && isPP) {
+                feedback.innerHTML = `<span class="text-green-600">Corretto! 🎉</span>${badge}`;
+                points += isHardMode ? 20 : 10;
+            } else {
+                feedback.innerHTML = `<span class="text-red-600">Sbagliato. Era: ${currentVerb.b} - ${currentVerb.p} - ${currentVerb.pp}</span>${badge}`;
+                points = Math.max(0, points - 5);
+            }
+            document.getElementById('scoreCounter').innerText = "Punti: " + points;
+        }
+
         function downloadImage() {
-            const btn = document.querySelector('button');
-            btn.innerText = "⏳ GENERAZIONE IN CORSO...";
-            html2canvas(document.querySelector("#captureArea"), {
-                scale: 2, // Alta qualità
-                logging: false,
-                useCORS: true
-            }).then(canvas => {
+            const btn = document.querySelector('button[onclick="downloadImage()"]');
+            btn.innerText = "⏳ SALVATAGGIO...";
+            html2canvas(document.querySelector("#captureArea"), { scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'tabella_verbi_irregolari_completa.png';
-                link.href = canvas.toDataURL("image/png");
+                link.download = 'tabella_verbi_irregolari.png';
+                link.href = canvas.toDataURL();
                 link.click();
-                btn.innerText = "📸 SALVA COME IMMAGINE (FOTO)";
+                btn.innerText = "📸 SALVA COME FOTO";
             });
         }
+
+        document.addEventListener('keydown', e => {
+            if(e.code === 'Enter') isChecked ? newQuestion() : checkQuiz();
+            if(e.code === 'Space' && document.activeElement.classList.contains('quiz-input')) {
+                e.preventDefault();
+                const inputs = [...document.querySelectorAll('.quiz-input:not(:disabled)')];
+                inputs[(inputs.indexOf(document.activeElement) + 1) % inputs.length].focus();
+            }
+        });
+
+        window.onload = newQuestion;
     </script>
 </body>
 </html>

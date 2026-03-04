@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabella Verbi Irregolari per la Verifica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Colori per lo schermo */
+        .group-invariati { background-color: #d1f7d1 !important; }
+        .group-ought { background-color: #d1e9ff !important; }
+        .group-iau { background-color: #fff4cc !important; }
+        .group-en { background-color: #ffd1d1 !important; }
+        .group-identici { background-color: #f2f2f2 !important; }
+        .group-basepart { background-color: #ffead1 !important; }
+        
+        table { border-collapse: separate; border-spacing: 0 2px; }
+        th { position: sticky; top: 0; background: white; z-index: 10; }
+        td, th { border: 1px solid #e2e8f0; }
+
+        /* Ottimizzazione per la stampa */
+        @media print {
+            body { background-color: white !important; padding: 0 !important; margin: 0 !important; }
+            .no-print { display: none !important; }
+            .max-w-5xl { max-width: 100% !important; shadow: none !important; border: none !important; }
+            .shadow-xl { box-shadow: none !important; }
+            
+            /* Forza la stampa dei colori di sfondo */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            table { font-size: 10pt !important; width: 100% !important; }
+            th, td { padding: 4px !important; border: 1px solid #ccc !important; }
+            
+            h1 { font-size: 18pt !important; color: black !important; }
+            p { color: black !important; }
+            .bg-indigo-600 { background-color: #4f46e5 !important; color: white !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-4 md:p-8 font-sans">
+
+    <div class="max-w-5xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
+        <!-- Intestazione con pulsante stampa -->
+        <div class="bg-indigo-600 p-6 text-white flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">Verbi Irregolari - Scheda Completa</h1>
+                <p class="opacity-90">Organizzati per gruppi logici per la verifica.</p>
+            </div>
+            <button onclick="window.print()" class="no-print bg-white text-indigo-600 px-4 py-2 rounded-md font-bold hover:bg-indigo-50 transition-colors flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                STAMPA ORA
+            </button>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="p-3 font-bold text-gray-700">Forma Base</th>
+                        <th class="p-3 font-bold text-gray-700">Past Simple</th>
+                        <th class="p-3 font-bold text-gray-700">Participio Passato</th>
+                        <th class="p-3 font-bold text-gray-700 text-sm">Note sul Gruppo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- GRUPPO VERDE: INVARIATI -->
+                    <tr class="group-invariati">
+                        <td class="p-2 font-bold">Cost</td>
+                        <td class="p-2">cost</td>
+                        <td class="p-2">cost</td>
+                        <td class="p-2 italic text-xs text-green-800">Gruppo dei verbi "Tre Uguali": le forme non cambiano mai.</td>
+                    </tr>
+                    <tr class="group-invariati"><td class="p-2 font-bold">Cut</td><td class="p-2">cut</td><td class="p-2">cut</td><td></td></tr>
+                    <tr class="group-invariati"><td class="p-2 font-bold">Hit</td><td class="p-2">hit</td><td class="p-2">hit</td><td></td></tr>
+                    <tr class="group-invariati"><td class="p-2 font-bold">Hurt</td><td class="p-2">hurt</td><td class="p-2">hurt</td><td></td></tr>
+                    <tr class="group-invariati"><td class="p-2 font-bold">Let</td><td class="p-2">let</td><td class="p-2">let</td><td></td></tr>
+                    <tr class="group-invariati"><td class="p-2 font-bold">Put</td><td class="p-2">put</td><td class="p-2">put</td><td></td></tr>
+                    <tr class="group-invariati"><td class="p-2 font-bold">Read</td><td class="p-2">read</td><td class="p-2">read</td><td></td></tr>
+                    <tr class="group-invariati"><td class="p-2 font-bold">Shut</td><td class="p-2">shut</td><td class="p-2">shut</td><td></td></tr>
+
+                    <!-- GRUPPO AZZURRO: OUGHT/AUGHT -->
+                    <tr class="group-ought">
+                        <td class="p-2 font-bold">Bring</td>
+                        <td class="p-2">brought</td>
+                        <td class="p-2">brought</td>
+                        <td class="p-2 italic text-xs text-blue-800">Gruppo dei verbi che terminano in -ought o -aught.</td>
+                    </tr>
+                    <tr class="group-ought"><td class="p-2 font-bold">Buy</td><td class="p-2">bought</td><td class="p-2">bought</td><td></td></tr>
+                    <tr class="group-ought"><td class="p-2 font-bold">Catch</td><td class="p-2">caught</td><td class="p-2">caught</td><td></td></tr>
+                    <tr class="group-ought"><td class="p-2 font-bold">Fight</td><td class="p-2">fought</td><td class="p-2">fought</td><td></td></tr>
+                    <tr class="group-ought"><td class="p-2 font-bold">Teach</td><td class="p-2">taught</td><td class="p-2">taught</td><td></td></tr>
+                    <tr class="group-ought"><td class="p-2 font-bold">Think</td><td class="p-2">thought</td><td class="p-2">thought</td><td></td></tr>
+
+                    <!-- GRUPPO GIALLO: I-A-U -->
+                    <tr class="group-iau">
+                        <td class="p-2 font-bold">Begin</td>
+                        <td class="p-2">began</td>
+                        <td class="p-2">begun</td>
+                        <td class="p-2 italic text-xs text-yellow-900">Gruppo con schema vocale I -> A -> U.</td>
+                    </tr>
+                    <tr class="group-iau"><td class="p-2 font-bold">Drink</td><td class="p-2">drank</td><td class="p-2">drunk</td><td></td></tr>
+                    <tr class="group-iau"><td class="p-2 font-bold">Ring</td><td class="p-2">rang</td><td class="p-2">rung</td><td></td></tr>
+                    <tr class="group-iau"><td class="p-2 font-bold">Sing</td><td class="p-2">sang</td><td class="p-2">sung</td><td></td></tr>
+                    <tr class="group-iau"><td class="p-2 font-bold">Swim</td><td class="p-2">swam</td><td class="p-2">swum</td><td></td></tr>
+
+                    <!-- GRUPPO ROSSO: -EN -->
+                    <tr class="group-en">
+                        <td class="p-2 font-bold">Beat</td>
+                        <td class="p-2">beat</td>
+                        <td class="p-2">beaten</td>
+                        <td class="p-2 italic text-xs text-red-800">Participio passato finisce in -en o -n.</td>
+                    </tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Bite</td><td class="p-2">bit</td><td class="p-2">bitten</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Blow</td><td class="p-2">blew</td><td class="p-2">blown</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Break</td><td class="p-2">broke</td><td class="p-2">broken</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Choose</td><td class="p-2">chose</td><td class="p-2">chosen</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Draw</td><td class="p-2">drew</td><td class="p-2">drawn</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Drive</td><td class="p-2">drove</td><td class="p-2">driven</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Eat</td><td class="p-2">ate</td><td class="p-2">eaten</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Fall</td><td class="p-2">fell</td><td class="p-2">fallen</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Fly</td><td class="p-2">flew</td><td class="p-2">flown</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Forget</td><td class="p-2">forgot</td><td class="p-2">forgotten</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Give</td><td class="p-2">gave</td><td class="p-2">given</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Grow</td><td class="p-2">grew</td><td class="p-2">grown</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Hide</td><td class="p-2">hid</td><td class="p-2">hidden</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Know</td><td class="p-2">knew</td><td class="p-2">known</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Ride</td><td class="p-2">rode</td><td class="p-2">ridden</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Rise</td><td class="p-2">rose</td><td class="p-2">risen</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">See</td><td class="p-2">saw</td><td class="p-2">seen</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Show</td><td class="p-2">showed</td><td class="p-2">shown</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Speak</td><td class="p-2">spoke</td><td class="p-2">spoken</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Steal</td><td class="p-2">stole</td><td class="p-2">stolen</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Take</td><td class="p-2">took</td><td class="p-2">taken</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Throw</td><td class="p-2">threw</td><td class="p-2">thrown</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Wake</td><td class="p-2">woke</td><td class="p-2">woken</td><td></td></tr>
+                    <tr class="group-en"><td class="p-2 font-bold">Write</td><td class="p-2">wrote</td><td class="p-2">written</td><td></td></tr>
+
+                    <!-- GRUPPO GRIGIO: IDENTICI TRA LORO -->
+                    <tr class="group-identici">
+                        <td class="p-2 font-bold">Build</td>
+                        <td class="p-2">built</td>
+                        <td class="p-2">built</td>
+                        <td class="p-2 italic text-xs text-gray-700">Past Simple e Participio identici tra loro.</td>
+                    </tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Burn</td><td class="p-2">burnt</td><td class="p-2">burnt</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Dream</td><td class="p-2">dreamt</td><td class="p-2">dreamt</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Feel</td><td class="p-2">felt</td><td class="p-2">felt</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Find</td><td class="p-2">found</td><td class="p-2">found</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Get</td><td class="p-2">got</td><td class="p-2">got</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Have</td><td class="p-2">had</td><td class="p-2">had</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Hear</td><td class="p-2">heard</td><td class="p-2">heard</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Hold</td><td class="p-2">held</td><td class="p-2">held</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Keep</td><td class="p-2">kept</td><td class="p-2">kept</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Learn</td><td class="p-2">learnt</td><td class="p-2">learnt</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Leave</td><td class="p-2">left</td><td class="p-2">left</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Lend</td><td class="p-2">lent</td><td class="p-2">lent</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Light</td><td class="p-2">lit</td><td class="p-2">lit</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Lose</td><td class="p-2">lost</td><td class="p-2">lost</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Make</td><td class="p-2">made</td><td class="p-2">made</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Mean</td><td class="p-2">meant</td><td class="p-2">meant</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Meet</td><td class="p-2">met</td><td class="p-2">met</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Pay</td><td class="p-2">paid</td><td class="p-2">paid</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Say</td><td class="p-2">said</td><td class="p-2">said</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Sell</td><td class="p-2">sold</td><td class="p-2">sold</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Send</td><td class="p-2">sent</td><td class="p-2">sent</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Shoot</td><td class="p-2">shot</td><td class="p-2">shot</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Sit</td><td class="p-2">sat</td><td class="p-2">sat</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Sleep</td><td class="p-2">slept</td><td class="p-2">slept</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Smell</td><td class="p-2">smelt</td><td class="p-2">smelt</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Spend</td><td class="p-2">spent</td><td class="p-2">spent</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Stand</td><td class="p-2">stood</td><td class="p-2">stood</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Tell</td><td class="p-2">told</td><td class="p-2">told</td><td></td></tr>
+                    <tr class="group-identici"><td class="p-2 font-bold">Understand</td><td class="p-2">understood</td><td class="p-2">understood</td><td></td></tr>
+
+                    <!-- GRUPPO ARANCIONE: BASE = PARTICIPIO -->
+                    <tr class="group-basepart">
+                        <td class="p-2 font-bold">Become</td>
+                        <td class="p-2">became</td>
+                        <td class="p-2">become</td>
+                        <td class="p-2 italic text-xs text-orange-900">Forma Base e Participio Passato tornano uguali.</td>
+                    </tr>
+                    <tr class="group-basepart"><td class="p-2 font-bold">Come</td><td class="p-2">came</td><td class="p-2">come</td><td></td></tr>
+                    <tr class="group-basepart"><td class="p-2 font-bold">Run</td><td class="p-2">ran</td><td class="p-2">run</td><td></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="no-print mt-8 text-center text-gray-500 text-sm">
+        <p>Clicca sul pulsante "Stampa Ora" in alto per stampare questa scheda.</p>
+    </div>
+
+</body>
+</html>
